@@ -124,12 +124,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Database.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Student.cpp" />
     <ClCompile Include="StudentGrade.cpp" />
     <ClCompile Include="Students_Database.cpp" />
     <ClCompile Include="Subject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Database.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Student.h" />
     <ClInclude Include="StudentGrade.h" />
     <ClInclude Include="Subject.h" />

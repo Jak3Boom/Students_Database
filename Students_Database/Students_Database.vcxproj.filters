@@ -13,30 +13,60 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Файлы заголовков\Models">
+      <UniqueIdentifier>{2cbb9644-fdb4-41f0-939d-58b2de4cf36f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Models">
+      <UniqueIdentifier>{5cad6ef4-adbe-41a5-88e0-f22f7247c15c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Database">
+      <UniqueIdentifier>{76e6fd8e-a2bf-4252-8ba9-0e6e004c9ffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Database">
+      <UniqueIdentifier>{b62cf131-07e0-4e86-9f4a-27904055bc77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Menu">
+      <UniqueIdentifier>{39543eec-8a40-471f-8ac3-ede62c5f8856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Menu">
+      <UniqueIdentifier>{f0ae3048-4d1c-4bce-bbcd-cbac473d4738}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Students_Database.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Student.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Subject.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Models</Filter>
     </ClCompile>
     <ClCompile Include="StudentGrade.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Student.cpp">
+      <Filter>Исходные файлы\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>Исходные файлы\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Исходные файлы\Menu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Student.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Subject.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Student.h">
+      <Filter>Файлы заголовков\Models</Filter>
     </ClInclude>
     <ClInclude Include="StudentGrade.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Database.h">
+      <Filter>Файлы заголовков\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Файлы заголовков\Menu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

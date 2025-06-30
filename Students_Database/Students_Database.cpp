@@ -2,6 +2,8 @@
 #include <vector>
 
 #include "Student.h"
+#include "Database.h"
+#include "Menu.h"
 
 int main()
 {
@@ -10,19 +12,13 @@ int main()
 	Student s3("Bam", "bam@gmail.com", "72");
 	std::vector<Student> students = { s1, s2, s3 };
 
-	for (Student student : students)
-	{
+	Database db;
 
-	}
+	db.AddStudent(s1);
+	db.AddStudent(s2);
+	db.AddStudent(s3);
 
-	char choice;
-	do
-	{
-		std::cout << "=== ГЛАВНОЕ МЕНЮ ===\n";
-		std::cout << "1. Управление студентами\n";
-		std::cout << "2. Управление оценками\n";
-		std::cout << "3. Выход\n";
+	showMainMenu(db);
 
-		std::cin >> choice;
-	} while (choice != '3');
+	return 0;
 }

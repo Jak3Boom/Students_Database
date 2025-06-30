@@ -8,3 +8,18 @@ Student::Student(std::string name, std::string email, std::string group)
 	  email(email),
 	  group(group)
 {}
+
+void Student::setName(std::string newName)
+{
+	name = newName;
+}
+
+void Student::setEmail(std::string newEmail)
+{
+	email = newEmail;
+}
+
+void Student::setGroup(std::string newGroup)
+{
+	group = newGroup;
+}
