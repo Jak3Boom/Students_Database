@@ -13,10 +13,10 @@ private:
 public:
 	Student(std::string name, std::string email, std::string group);
 
-	int getId() { return id; }
-	std::string getName() { return name; }
-	std::string getEmail() { return email; }
-	std::string getGroup() { return group; }
+	int getId() const { return id; }
+	std::string getName() const { return name; }
+	std::string getEmail() const { return email; }
+	std::string getGroup() const { return group; }
 
 	void setName(std::string newName);
 	void setEmail(std::string newEmail);
