@@ -27,7 +27,9 @@ public:
 	Subject& getSubjectById(int id);
 
 	// Оценки
-	std::vector<StudentGrade> getStudentGradesById(int studentId) const;
+	std::vector<StudentGrade> getStudentGradesById(int studentId);
+	StudentGrade& getGradeById(int id);
+	void showAllStudentGrades(int studentId);
 
 // Обновление данных
 
@@ -41,4 +43,6 @@ public:
 
 	// Оценки
 	void rate(int studentId, int subjectId, int grade);
+	void editGradeData(StudentGrade& grade);
+	void deleteGradeById(int gradeId);
 };

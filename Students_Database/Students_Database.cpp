@@ -26,7 +26,7 @@ int main()
 	db.addSubject(physics);
 	db.addSubject(english);
 
-	showMainMenu(db);
+	mainMenu(db);
 
 	return 0;
 }

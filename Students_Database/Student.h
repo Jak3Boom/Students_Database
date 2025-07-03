@@ -4,8 +4,8 @@
 class Student
 {
 private:
-	static int idCounter;
-	int id;
+	static int studentIdCounter;
+	int studentId;
 	std::string name;
 	std::string email;
 	std::string group;
@@ -13,7 +13,7 @@ private:
 public:
 	Student(std::string name, std::string email, std::string group);
 
-	int getId() const { return id; }
+	int getId() const { return studentId; }
 	std::string getName() const { return name; }
 	std::string getEmail() const { return email; }
 	std::string getGroup() const { return group; }

@@ -10,16 +10,18 @@ std::string Database::getCurrentDate()
 // Получаем список всех студентов
 void Database::showAllStudents() const
 {
-	std::cout << "=== СПИСОК ВСЕХ СТУДЕНТОВ ===\n\n";
+	std::cout << "\n" << std::string(80, '=') << "\n";
+	std::cout << std::format("{:^80}\n", "СПИСОК ВСЕХ СТУДЕНТОВ");
+	std::cout << std::string(80, '=') << "\n";
 	for (Student student : students)
 	{
-		std::cout << "ID: " << student.getId()
-			<< " | Имя: " << student.getName()
-			<< " | Email: " << student.getEmail()
-			<< " | Группа: " << student.getGroup()
-			<< "\n";
+		std::cout << std::format("ID: {} | Имя: {} | Email: {} | Группа: {}\n",
+			student.getId(),
+			student.getName(),
+			student.getEmail(),
+			student.getGroup());
 	}
-	std::cout << "\n";
+	std::cout << std::string(80, '=') << "\n";
 }
 
 // Получаем студента по ID
@@ -36,24 +38,24 @@ Student& Database::getStudentById(int id)
 // Отображаем данные студента по ID
 void Database::showStudentById(int id)
 {
-	std::cout << "\nID: " << getStudentById(id).getId()
-		<< " | Имя: " << getStudentById(id).getName()
-		<< " | Email: " << getStudentById(id).getEmail()
-		<< " | Группа: " << getStudentById(id).getGroup()
-		<< "\n\n";
+	std::cout << std::format("\nID: {} | Имя: {} | Email: {} | Группа: {}\n",
+		getStudentById(id).getId(),
+		getStudentById(id).getName(),
+		getStudentById(id).getEmail(),
+		getStudentById(id).getGroup());
 }
 
 // Получаем список всех предметов
 void Database::showAllSubjects()
 {
-	std::cout << "=== СПИСОК ВСЕХ ПРЕДМЕТОВ ===\n\n";
+	std::cout << "\n" << std::string(80, '=') << "\n";
+	std::cout << std::format("{:^80}\n", "СПИСОК ВСЕХ ПРЕДМЕТОВ");
+	std::cout << std::string(80, '=') << "\n";
 	for (Subject subject : subjects)
 	{
-		std::cout << "ID: " << subject.getId()
-			<< " | " << subject.getName()
-			<< "\n";
+		std::cout << std::format("ID: {} | {}\n", subject.getId(), subject.getName());
 	}
-	std::cout << "\n";
+	std::cout << std::string(80, '=') << "\n";
 }
 
 // Получаем предмет по ID
@@ -68,7 +70,7 @@ Subject& Database::getSubjectById(int id)
 }
 
 // Получаем оценки по ID студента
-std::vector<StudentGrade> Database::getStudentGradesById(int studentId) const
+std::vector<StudentGrade> Database::getStudentGradesById(int studentId)
 {
 	std::vector<StudentGrade> studentGrades;
 	for (const StudentGrade& grade : grades)
@@ -78,10 +80,43 @@ std::vector<StudentGrade> Database::getStudentGradesById(int studentId) const
 			studentGrades.push_back(grade);
 		}
 	}
-
-	if (studentGrades.empty()) { throw std::runtime_error("У студента с ID " + std::to_string(studentId) + " нет оценок"); }
-
 	return studentGrades;
+}
+
+// Получаем оценку по ID
+StudentGrade& Database::getGradeById(int id)
+{
+	if (id <= 0) { throw std::invalid_argument("ID не может быть отрицательным!\n"); }
+
+	int index = id - 1;
+	if (index >= grades.size()) { throw std::out_of_range("Оценка с таким ID не найдена!\n"); }
+
+	return grades[index];
+}
+
+// Отображаем все оценки студента
+void Database::showAllStudentGrades(int studentId)
+{
+	auto grades = getStudentGradesById(studentId);
+
+	if (grades.empty())
+	{
+		std::cout << std::format("\nУ студента с ID {} пока нет оценок.\n\n", studentId);
+		return;
+	}
+
+	std::cout << "\n" << std::string(80, '=') << "\n";
+	std::cout << std::format("{:^80}\n", "ОЦЕНКИ СТУДЕНТА");
+	std::cout << std::string(80, '=') << "\n";
+
+	for (const StudentGrade& data : grades) {
+		std::cout << std::format("ID: {} | {} | Оценка: {} | {}\n",
+			data.getGradeId(),
+			data.getSubjectName(),
+			data.getGrade(),
+			data.getDate());
+	}
+	std::cout << std::string(80, '=') << "\n\n";
 }
 
 // Добавляем студента в список
@@ -161,8 +196,16 @@ void Database::addSubject(const Subject& subject)
 // Ставим оценку студенту
 void Database::rate(int studentId, int subjectId, int grade)
 {
-	if (studentId <= 0 || studentId - 1 >= students.size()) { throw std::invalid_argument("Студент с таким ID не найден!"); }
-	if (subjectId <= 0 || subjectId - 1 >= subjects.size()) { throw std::out_of_range("Предмет с таким ID не найден!"); }
+	if (studentId <= 0 || studentId - 1 >= students.size())
+	{
+		std::cout << std::format("\nСтудент с ID {} не найден.\n\n", studentId);
+		return;
+	}
+	if (subjectId <= 0 || subjectId - 1 >= subjects.size())
+	{
+		std::cout << std::format("\nПредмет с ID {} не найден.\n\n", subjectId);
+		return;
+	}
 
 	std::string currentDate = getCurrentDate();
 
@@ -173,4 +216,27 @@ void Database::rate(int studentId, int subjectId, int grade)
 	std::cout << "Нажмите Enter для продолжения...\n";
 	std::cin.ignore();
 	std::cin.get();
+}
+
+void Database::editGradeData(StudentGrade& grade)
+{
+	int newData;
+	do
+	{
+		std::cout << "Введите новую оценку от 0 до 5: ";
+		std::cin >> newData;
+	} while (newData < 0 || newData > 5); // Проверка, входит ли введённое значение в необходимый диапазон
+
+	grade.setGrade(newData);
+	std::cout << "Оценка обновлена!\n";
+}
+
+// Удаляем оценку по ID
+void Database::deleteGradeById(int gradeId)
+{
+	int index = gradeId - 1;
+	if (index < 0 || index >= grades.size()) { throw std::out_of_range("Оценка с таким ID не найдена!"); }
+
+	grades.erase(grades.begin() + index);
+	std::cout << "Оценка удалена!\n";
 }
