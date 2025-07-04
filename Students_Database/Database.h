@@ -34,12 +34,12 @@ public:
 // Обновление данных
 
 	// Студенты
-	void addStudent(const Student& student);
+	void addStudent(const std::string& name, const std::string& email, const std::string& group);
 	void editStudentData(Student& student);
 	void deleteStudent(int studentId);
 
 	// Предметы
-	void addSubject(const Subject& subject);
+	void addSubject(int id, const std::string& name);
 
 	// Оценки
 	void rate(int studentId, int subjectId, int grade);

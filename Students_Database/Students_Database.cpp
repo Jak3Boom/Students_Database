@@ -10,21 +10,13 @@ int main()
 {
 	Database db;
 
-	Student s1("Bum", "bum@gmail.com", "31");
-	Student s2("Bem", "bem@gmail.com", "11");
-	Student s3("Bam", "bam@gmail.com", "72");
+	db.addStudent("Bum", "bum@gmail.com", "31");
+	db.addStudent("Bem", "bem@gmail.com", "11");
+	db.addStudent("Bam", "bam@gmail.com", "72");
 
-	db.addStudent(s1);
-	db.addStudent(s2);
-	db.addStudent(s3);
-
-	Subject math(1, "Математика");
-	Subject physics(2, "Физика");
-	Subject english(3, "Английский");
-
-	db.addSubject(math);
-	db.addSubject(physics);
-	db.addSubject(english);
+	db.addSubject(1, "Математика");
+	db.addSubject(2, "Физика");
+	db.addSubject(3, "Английский");
 
 	mainMenu(db);
 

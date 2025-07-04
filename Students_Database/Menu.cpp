@@ -1,4 +1,5 @@
 #include "Menu.h"
+#include "Utils.h"
 
 // Главное меню
 void mainMenu(Database& db)
@@ -19,12 +20,15 @@ void mainMenu(Database& db)
 		switch (choice)
 		{
 		case '1': // Меню управления студентами
+			Utils::clearScreen();
 			studentMenu(db);
 			break;
 		case '2': // Меню управления предметами
+			Utils::clearScreen();
 			subjectMenu(db);
 			break;
 		case '3': // Меню управления оценками
+			Utils::clearScreen();
 			gradesMenu(db);
 			break;
 		case '4':
@@ -43,7 +47,7 @@ void studentMenu(Database& db)
 	char choice;
 	do
 	{
-		std::cout << "\n" << std::string(80, '=') << "\n";
+		std::cout << std::string(80, '=') << "\n";
 		std::cout << std::format("{:^80}\n", "МЕНЮ УПРАВЛЕНИЯ СТУДЕНТАМИ");
 		std::cout << std::string(80, '=') << "\n";
 
@@ -58,22 +62,45 @@ void studentMenu(Database& db)
 		switch (choice)
 		{
 		case '1': // Получаем список всех студентов
+		{
+			Utils::clearScreen();
+
 			db.showAllStudents();
+
+			Utils::pauseScreen();
+			Utils::clearScreen();
 			break;
+		}
 		case '2': // Получаем студента по ID
 		{
+			Utils::clearScreen();
+
 			std::cout << "Введите ID студента, которого нужно найти: ";
 			int id;
 			std::cin >> id;
-			db.showStudentById(id);
+
+			std::cout << "\n" << std::string(80, '=') << "\n";
+			std::cout << std::format("{:^80}\n", "ДАННЫЕ СТУДЕНТА");
+			std::cout << std::string(80, '=');
+			db.showStudentById(id); // Отображаем данные студента по ID
+			std::cout << std::string(80, '=') << "\n";
+
+			Utils::pauseScreen();
+			Utils::clearScreen();
 			break;
 		}
 		case '3': // Меняем данные студента
 		{
+			Utils::clearScreen();
+
 			std::cout << "Введите ID студента, у которого нужно изменить данные: ";
 			int id;
 			std::cin >> id;
+
+			std::cout << "\n";
 			db.editStudentData(db.getStudentById(id));
+
+			Utils::clearScreen();
 			break;
 		}
 		case '4': // Удаляем студента
@@ -82,6 +109,9 @@ void studentMenu(Database& db)
 			int id;
 			std::cin >> id;
 			db.deleteStudent(id);
+
+			Utils::pauseScreen();
+			Utils::clearScreen();
 			break;
 		}
 		case '5':
@@ -124,8 +154,7 @@ void subjectMenu(Database& db)
 			std::cout << "Введите название нового предмета: ";
 			std::cin >> newSubjectName;
 
-			Subject newSubject(newSubjectId, newSubjectName);
-			db.addSubject(newSubject);
+			db.addSubject(newSubjectId, newSubjectName);
 			break;
 		}
 		case '3':
@@ -187,9 +216,21 @@ void gradesMenu(Database& db)
 			int id;
 			std::cin >> id;
 
-			std::cout << "\nДанные студента:\n";
+			std::cout << "\n" << std::string(80, '=') << "\n";
+			std::cout << std::format("{:^80}\n", "ДАННЫЕ СТУДЕНТА");
+			std::cout << std::string(80, '=');
 			db.showStudentById(id); // Отображаем данные студента по ID
-			db.showAllStudentGrades(id); // Выводим данные о предмете и оценке по нему
+			std::cout << std::string(80, '=') << "\n";
+			try
+			{
+				db.showAllStudentGrades(id); // Выводим данные о предмете и оценке по нему
+			}
+			catch (const std::out_of_range& e) // Обработка ситуации, когда у студента нет оценок
+			{
+				std::cerr << "\n" << e.what();
+			}
+
+			Utils::pauseScreen();
 			break;
 		}
 		case '3': // Меняем оценку
@@ -197,26 +238,34 @@ void gradesMenu(Database& db)
 			int studentId;
 			int gradeId;
 
-			db.showAllStudents(); // Отображаем всех студентов
+			db.showAllStudents(); // Отображаем всех студентов для выбора
 			std::cout << "Введите ID студента, у которого нужно изменить оценку: ";
 			std::cin >> studentId;
 
-			std::cout << "\n";
-			db.showAllStudentGrades(studentId); // Отображаем все оценки выбранного студента
+			try
+			{
+				db.showAllStudentGrades(studentId); // Отображаем все оценки выбранного студента
+			}
+			catch (const std::out_of_range &e) // Обработка ситуации, когда у студента нет оценок
+			{
+				std::cerr << "\nОшибка: " << e.what();
+				break; // Выход из case, если нет оценок
+			}
+
 			std::cout << "Введите ID оценки, которую нужно изменить: ";
 			std::cin >> gradeId;
 
 			try
 			{
-				db.editGradeData(db.getGradeById(gradeId)); // Меняем оценку
+				db.editGradeData(db.getGradeById(gradeId)); // Получаем оценку по ID и изменяем её
 			}
-			catch (const std::invalid_argument& e)
+			catch (const std::invalid_argument& e) // Обработка ввода некорректного ID
 			{
-				std::cerr << e.what();
+				std::cerr << "\nОшибка: " << e.what();
 			}
-			catch (const std::out_of_range& e)
+			catch (const std::out_of_range& e) // Обработка ситуации, когда оценка с таким ID не найдена
 			{
-				std::cerr << e.what();
+				std::cerr << "\nОшибка: " << e.what();
 			}
 			break;
 		}
@@ -225,16 +274,42 @@ void gradesMenu(Database& db)
 			int studentId;
 			int gradeId;
 
-			db.showAllStudents(); // Отображаем всех студентов
+			db.showAllStudents(); // Отображаем всех студентов для выбора
 			std::cout << "Введите ID студента, у которого нужно удалить оценку: ";
 			std::cin >> studentId;
 
-			std::cout << "\n";
-			db.showAllStudentGrades(studentId); // Отображаем все оценки выбранного студента
+			try
+			{
+				db.showAllStudentGrades(studentId); // Отображаем все оценки выбранного студента
+			}
+			catch (const std::invalid_argument& e) // Обработка ввода некорректного ID
+			{
+				std::cerr << "\nОшибка: " << e.what();
+
+				Utils::pauseScreen();
+				break;
+			}
+			catch (const std::out_of_range& e) // Обработка ситуации, когда у студента нет оценок
+			{
+				std::cerr << "\nОшибка: " << e.what();
+
+				Utils::pauseScreen();
+				break;
+			}
+
 			std::cout << "Введите ID оценки, которую нужно удалить: ";
 			std::cin >> gradeId;
 
-			db.deleteGradeById(gradeId); // Удаляем оценку
+			try
+			{
+				db.deleteGradeById(gradeId); // Удаляем оценку
+			}
+			catch (const std::out_of_range& e) // Обработка ситуации, когда оценка с таким ID не найдена
+			{
+				std::cerr << "\nОшибка: " << e.what();
+
+				Utils::pauseScreen();
+			}
 			break;
 		}
 		case '5':
