@@ -28,22 +28,49 @@ void Database::showAllStudents() const
 // Получаем студента по ID
 Student& Database::getStudentById(int id)
 {
-	if (id <= 0) { throw std::invalid_argument("ID не может быть отрицательным!"); }
+	if (id <= 0) { throw std::invalid_argument("ID не может быть отрицательным!\n"); }
 
-	int index = id - 1;
-	if (index >= students.size()) { throw std::out_of_range("Студент с таким ID не найден!"); }
+	auto it = std::find_if(students.begin(), students.end(),
+		[id](const Student& student)
+		{
+			return student.getId() == id;
+		});
 
-	return students[index];
+	if (it == students.end())
+	{
+		throw std::out_of_range("Студент с таким ID не найден!\n");
+	}
+
+	return *it;
 }
 
 // Отображаем данные студента по ID
 void Database::showStudentById(int id)
 {
-	std::cout << std::format("\nID: {} | Имя: {} | Email: {} | Группа: {}\n",
-		getStudentById(id).getId(),
-		getStudentById(id).getName(),
-		getStudentById(id).getEmail(),
-		getStudentById(id).getGroup());
+	try
+	{
+		const Student& student = getStudentById(id);
+
+		std::cout << std::string(80, '=') << "\n";
+		std::cout << std::format("{:^80}\n", "ДАННЫЕ СТУДЕНТА");
+		std::cout << std::string(80, '=');
+
+		std::cout << std::format("\nID: {} | Имя: {} | Email: {} | Группа: {}\n",
+			student.getId(),
+			student.getName(),
+			student.getEmail(),
+			student.getGroup());
+
+		std::cout << std::string(80, '=') << "\n";
+	}
+	catch (const std::invalid_argument& e)
+	{
+		std::cerr << "\nОшибка: " << e.what();
+	}
+	catch (const std::out_of_range& e)
+	{
+		std::cerr << "\nОшибка: " << e.what();
+	}
 }
 
 // Получаем список всех предметов
@@ -130,11 +157,7 @@ void Database::editStudentData(Student& student)
 	char choice;
 	do
 	{
-		std::cout << std::string(80, '=') << "\n";
-		std::cout << std::format("{:^80}\n", "ДАННЫЕ СТУДЕНТА");
-		std::cout << std::string(80, '=');
 		showStudentById(student.getId()); // Отображаем данные студента по ID
-		std::cout << std::string(80, '=') << "\n";
 
 		std::cout << "Что нужно изменить?\n"
 			<< "1. Имя\n"
@@ -188,6 +211,8 @@ void Database::editStudentData(Student& student)
 // Удаляем студента
 void Database::deleteStudent(int studentId)
 {
+	if (studentId <= 0) { throw std::invalid_argument("ID не может быть отрицательным!\n"); }
+
 	auto it = std::find_if(students.begin(), students.end(),
 		[studentId](const Student& student)
 		{
@@ -196,7 +221,7 @@ void Database::deleteStudent(int studentId)
 
 	if (it == students.end())
 	{
-		throw std::out_of_range("Студент с таким ID не найден!");
+		throw std::out_of_range("Студент с таким ID не найден!\n");
 	}
 
 	students.erase(it);
@@ -249,14 +274,22 @@ void Database::editGradeData(StudentGrade& grade)
 }
 
 // Удаляем оценку по ID
-void Database::deleteGradeById(int gradeId)
+void Database::deleteGrade(int gradeId)
 {
 	if (gradeId <= 0) { throw std::invalid_argument("ID не может быть отрицательным!\n"); }
 
-	int index = gradeId - 1;
-	if (index < 0 || index >= grades.size()) { throw std::out_of_range("Оценка с таким ID не найдена!"); }
+	auto it = std::find_if(grades.begin(), grades.end(),
+		[gradeId](const StudentGrade& studentGrade)
+		{
+			return studentGrade.getGradeId() == gradeId;
+		});
 
-	grades.erase(grades.begin() + index);
+	if (it == grades.end())
+	{
+		throw std::out_of_range("Оценка с таким ID не найдена!");
+	}
+
+	grades.erase(it);
 	std::cout << "\nОценка удалена!\n";
 
 	Utils::pauseScreen();

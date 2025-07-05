@@ -44,5 +44,5 @@ public:
 	// Оценки
 	void rate(int studentId, int subjectId, int grade);
 	void editGradeData(StudentGrade& grade);
-	void deleteGradeById(int gradeId);
+	void deleteGrade(int gradeId);
 };
