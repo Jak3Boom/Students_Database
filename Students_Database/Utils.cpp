@@ -12,6 +12,6 @@ void Utils::clearScreen()
 void Utils::pauseScreen()
 {
     std::cout << "\nНажмите Enter для продолжения...";
-    std::cin.ignore();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cin.get();
 }

@@ -44,7 +44,7 @@ Student& Database::getStudentById(int id)
 
 	if (it == students.end())
 	{
-		throw std::out_of_range("Студент с таким ID не найден!\n");
+		throw std::out_of_range(std::format("Студент с ID {} не найден!\n", id));
 	}
 
 	return *it;
@@ -145,6 +145,7 @@ StudentGrade& Database::getGradeById(int id)
 void Database::showAllStudentGrades(int studentId)
 {
 	if (studentId <= 0) { throw std::invalid_argument("ID студента не может быть отрицательным!\n"); }
+	const Student& student = getStudentById(studentId);
 
 	auto grades = getStudentGradesById(studentId);
 
@@ -173,25 +174,29 @@ void Database::addStudent(const std::string& name, const std::string& email, con
 // Обновляем данные существующего студента
 void Database::editStudentData(Student& student)
 {
-	char choice;
+	int choice = 0;
 	do
 	{
-		showStudentById(student.getId()); // Отображаем данные студента по ID
+		do
+		{
+			Utils::clearScreen();
+			showStudentById(student.getId()); // Отображаем данные студента по ID
+			std::cout << "Что нужно изменить?\n"
+				<< "1. Имя\n"
+				<< "2. Email\n"
+				<< "3. Группа\n"
+				<< "4. Назад\n";
 
-		std::cout << "Что нужно изменить?\n"
-			<< "1. Имя\n"
-			<< "2. Email\n"
-			<< "3. Группа\n"
-			<< "4. Назад\n";
-
-		std::cin >> choice;
+			std::cin >> choice;
+		} while (choice <= 0 || choice > 4);
 
 		// Переменная для изменения данных
 		std::string newData;
 
 		switch (choice)
 		{
-		case '1': // Обновляем имя студента
+		case 1: // Обновляем имя студента
+		{
 			std::cout << "Введите новое имя: ";
 			std::cin >> newData;
 			student.setName(newData);
@@ -200,7 +205,9 @@ void Database::editStudentData(Student& student)
 			Utils::pauseScreen();
 			Utils::clearScreen();
 			break;
-		case '2': // Обновляем Email студента
+		}
+		case 2: // Обновляем Email студента
+		{
 			std::cout << "Введите новый Email: ";
 			std::cin >> newData;
 			student.setEmail(newData);
@@ -209,7 +216,9 @@ void Database::editStudentData(Student& student)
 			Utils::pauseScreen();
 			Utils::clearScreen();
 			break;
-		case '3': // Обновляем группу студента
+		}
+		case 3: // Обновляем группу студента
+		{
 			std::cout << "Введите новую группу: ";
 			std::cin >> newData;
 			student.setGroup(newData);
@@ -218,13 +227,17 @@ void Database::editStudentData(Student& student)
 			Utils::pauseScreen();
 			Utils::clearScreen();
 			break;
-		case '4': // "Назад"
+		}
+		case 4: // "Назад"
+			Utils::clearScreen();
 			break;
 		default:
 			std::cout << "Такого варианта нет!\n";
+			Utils::pauseScreen();
+			Utils::clearScreen();
 		}
 
-	} while (choice != '4');
+	} while (choice != 4);
 }
 
 // Удаляем студента
@@ -244,7 +257,6 @@ void Database::deleteStudent(int studentId)
 	}
 
 	students.erase(it);
-	std::cout << "\nСтудент удалён!\n";
 }
 
 // Добавляем новый предмет
@@ -284,9 +296,6 @@ void Database::editGradeData(StudentGrade& grade)
 	} while (newData < 0 || newData > 5); // Проверка, входит ли введённое значение в необходимый диапазон
 
 	grade.setGrade(newData);
-	std::cout << "\nОценка обновлена!\n";
-
-	Utils::pauseScreen();
 }
 
 // Удаляем оценку по ID
@@ -302,11 +311,8 @@ void Database::deleteGrade(int gradeId)
 
 	if (it == grades.end())
 	{
-		throw std::out_of_range("Оценка с таким ID не найдена!");
+		throw std::out_of_range(std::format("Оценка с ID {} не найдена!\n", gradeId));
 	}
 
 	grades.erase(it);
-	std::cout << "\nОценка удалена!\n";
-
-	Utils::pauseScreen();
 }
