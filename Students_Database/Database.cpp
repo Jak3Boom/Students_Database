@@ -1,5 +1,6 @@
 #include <format>
 #include <algorithm>
+#include <fstream>
 
 #include "Database.h"
 #include "Utils.h"
@@ -83,7 +84,7 @@ void Database::showAllSubjects() const
 		throw std::out_of_range("Список пуст!\n");
 	}
 
-	for (Subject subject : subjects)
+	for (const Subject& subject : subjects)
 	{
 		std::cout << std::format("ID: {} | {}\n",
 			subject.getId(),
@@ -315,4 +316,167 @@ void Database::deleteGrade(int gradeId)
 	}
 
 	grades.erase(it);
+}
+
+// Загрузка данных из файлов
+void Database::loadFromFiles()
+{
+	students.clear();
+	subjects.clear();
+	grades.clear();
+
+	// Загрузка студентов из students.txt
+	std::ifstream studentsFile("students.txt");
+	if (studentsFile.is_open())
+	{
+		std::string line;
+		std::getline(studentsFile, line); // Пропускаем шапку
+		while (std::getline(studentsFile, line))
+		{
+			size_t pos = 0;
+			size_t nextPos;
+
+			// Извлечение id
+			nextPos = line.find("|", pos);
+			std::string id = line.substr(pos, nextPos - pos);
+			pos = nextPos + 1;
+
+			// Извлечение name
+			nextPos = line.find("|", pos);
+			std::string name = line.substr(pos, nextPos - pos);
+			pos = nextPos + 1;
+
+			// Извлечение email
+			nextPos = line.find("|", pos);
+			std::string email = line.substr(pos, nextPos - pos);
+			pos = nextPos + 1;
+
+			// Извлечение group
+			std::string group = line.substr(pos);
+
+			addStudent(name, email, group);
+		}
+	}
+	studentsFile.close();
+
+	// Загрузка предметов из subjects.txt
+	std::ifstream subjectsFile("subjects.txt");
+	if (subjectsFile.is_open())
+	{
+		std::string line;
+		std::getline(subjectsFile, line); // Пропускаем шапку
+		while (std::getline(subjectsFile, line))
+		{
+			size_t pos = 0;
+			size_t nextPos;
+
+			// Извлечение id
+			nextPos = line.find("|", pos);
+			std::string id = line.substr(pos, nextPos - pos);
+			pos = nextPos + 1;
+
+			// Извлечение name
+			std::string name = line.substr(pos);
+
+			addSubject(std::stoi(id), name);
+		}
+	}
+	subjectsFile.close();
+
+	// Загрузка оценок из grades.txt
+	std::ifstream gradesFile("grades.txt");
+	if (gradesFile.is_open())
+	{
+		std::string line;
+		std::getline(gradesFile, line); // Пропускаем шапку
+		while (std::getline(gradesFile, line))
+		{
+			size_t pos = 0;
+			size_t nextPos;
+
+			// Извлечение gradeId
+			nextPos = line.find("|", pos);
+			std::string gradeId = line.substr(pos, nextPos - pos);
+			pos = nextPos + 1;
+
+			// Извлечение studentId
+			nextPos = line.find("|", pos);
+			std::string studentId = line.substr(pos, nextPos - pos);
+			pos = nextPos + 1;
+
+			// Извлечение subjectId
+			nextPos = line.find("|", pos);
+			std::string subjectId = line.substr(pos, nextPos - pos);
+			pos = nextPos + 1;
+
+			// Извлечение subjectName
+			nextPos = line.find("|", pos);
+			std::string subjectName = line.substr(pos, nextPos - pos);
+			pos = nextPos + 1;
+
+			// Извлечение grade
+			nextPos = line.find("|", pos);
+			std::string grade = line.substr(pos, nextPos - pos);
+			pos = nextPos + 1;
+
+			// Извлечение date
+			std::string date = line.substr(pos);
+
+			grades.emplace_back(std::stoi(studentId), std::stoi(subjectId), subjectName, std::stoi(grade), date);
+		}
+	}
+	gradesFile.close();
+}
+
+// Сохранение данных в файл
+void Database::saveToFiles() const
+{
+	// Сохранение данных студентов в файл
+	std::ofstream studentsFile("students.txt");
+	if (!studentsFile.is_open()) {
+		std::cerr << "Ошибка открытия файла students.txt\n";
+		return;
+	}
+	studentsFile << "id | name | email | group\n";
+	for (const auto& student : students) {
+		studentsFile << student.getId() << "|"
+			<< student.getName() << "|"
+			<< student.getEmail() << "|"
+			<< student.getGroup() << "\n";
+	}
+	studentsFile.close();
+
+	// Сохранение данных о предметах в файл
+	std::ofstream subjectsFile("subjects.txt");
+	if (!subjectsFile.is_open())
+	{
+		std::cerr << "Ошибка открытия файла subjects.txt\n";
+		return;
+	}
+	subjectsFile << "id | name\n";
+	for (const auto& subject : subjects)
+	{
+		subjectsFile << subject.getId() << "|"
+			<< subject.getName() << "\n";
+	}
+	subjectsFile.close();
+
+	// Сохранение данных об оценках в файл
+	std::ofstream gradesFile("grades.txt");
+	if (!gradesFile.is_open())
+	{
+		std::cerr << "Ошибка открытия файла grades.txt\n";
+		return;
+	}
+	gradesFile << "grade_id | student_id | subject_id | subject_name | grade | date\n";
+	for (const auto& grade : grades)
+	{
+		gradesFile << grade.getGradeId() << "|"
+			<< grade.getStudentId() << "|"
+			<< grade.getSubjectId() << "|"
+			<< grade.getSubjectName() << "|"
+			<< grade.getGrade() << "|"
+			<< grade.getDate() << "\n";
+	}
+	gradesFile.close();
 }

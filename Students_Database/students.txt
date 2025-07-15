@@ -1,0 +1,6 @@
+id | name | email | group
+1|Ирина Новикова|irina.novikova@gmail.com|117
+2|Константин Егоров|konstantin.egorov@gmail.com|118
+3|Светлана Фролова|svetlana.frolova@gmail.com|119
+4|Артём Белов|artyom.belov@gmail.com|120
+5|Roman|roman@gmail.com|129

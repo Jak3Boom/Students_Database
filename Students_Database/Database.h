@@ -44,4 +44,8 @@ public:
 	void rate(int studentId, int subjectId, int grade);
 	void editGradeData(StudentGrade& grade);
 	void deleteGrade(int gradeId);
+
+// Работа с файлами
+	void loadFromFiles();
+	void saveToFiles() const;
 };
