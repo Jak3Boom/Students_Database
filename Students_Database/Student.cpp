@@ -9,17 +9,17 @@ Student::Student(std::string name, std::string email, std::string group)
 	  group(group)
 {}
 
-void Student::setName(std::string newName)
+void Student::setName(const std::string& newName)
 {
 	name = newName;
 }
 
-void Student::setEmail(std::string newEmail)
+void Student::setEmail(const std::string& newEmail)
 {
 	email = newEmail;
 }
 
-void Student::setGroup(std::string newGroup)
+void Student::setGroup(const std::string& newGroup)
 {
 	group = newGroup;
 }

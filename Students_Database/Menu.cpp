@@ -70,23 +70,24 @@ void studentMenu(Database& db)
 		std::cout << std::format("{:^80}\n", "МЕНЮ УПРАВЛЕНИЯ СТУДЕНТАМИ");
 		std::cout << std::string(80, '=') << "\n";
 
-		std::cout << "1. Получить список всех студентов\n";
-		std::cout << "2. Получить студента по ID\n";
-		std::cout << "3. Изменить данные студента\n";
-		std::cout << "4. Удалить студента из списка\n";
-		std::cout << "5. Назад\n";
+		std::cout << "1. Добавить нового студента\n";
+		std::cout << "2. Получить список всех студентов\n";
+		std::cout << "3. Получить студента по ID\n";
+		std::cout << "4. Изменить данные студента\n";
+		std::cout << "5. Удалить студента из списка\n";
+		std::cout << "6. Назад\n";
 
 		std::cin >> input;
 
 		// Проверка ввода
-		if (input.length() == 1 && input[0] >= '1' && input[0] <= '5')
+		if (input.length() == 1 && input[0] >= '1' && input[0] <= '6')
 		{
 			choice = input[0];
 		}
 		else
 		{
 			choice = '0';
-			std::cout << "\nВведите цифру от 1 до 5!\n";
+			std::cout << "\nВведите цифру от 1 до 6!\n";
 			Utils::pauseScreen();
 			Utils::clearScreen();
 			continue;
@@ -94,25 +95,41 @@ void studentMenu(Database& db)
 
 		switch (choice)
 		{
-		case '1': // Получаем список всех студентов
+		case '1': // Добавляем нового студента
+		{
+			Utils::clearScreen();
+
+			std::string name, email, group;
+
+			std::cout << "Введите имя студента: ";
+			std::cin >> name;
+
+			std::cout << "Введите email студента: ";
+			std::cin >> email;
+
+			std::cout << "Введите группу студента: ";
+			std::cin >> group;
+
+			// Добавляем студента в базу данных
+			db.addStudent(name, email, group);
+
+			std::cout << "\nСтудент добавлен!\n";
+			Utils::pauseScreen();
+			Utils::clearScreen();
+			break;
+		}
+		case '2': // Получаем список всех студентов
 		{
 			Utils::clearScreen();
 
 			// Отображаем всех студентов
-			try { db.showAllStudents(); }
-			catch (const std::out_of_range& e) // Обработка ситуации, когда в списке нет студентов
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db]() { db.showAllStudents(); })) break;
 
 			Utils::pauseScreen();
 			Utils::clearScreen();
 			break;
 		}
-		case '2': // Получаем студента по ID
+		case '3': // Получаем студента по ID
 		{
 			Utils::clearScreen();
 
@@ -122,99 +139,43 @@ void studentMenu(Database& db)
 			std::cin >> id;
 
 			// Отображаем данные студента по ID
-			try { db.showStudentById(id); }
-			catch (const std::invalid_argument& e) // Обработка ввода некорректного ID
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
-			catch (const std::out_of_range& e) // Обработка ситуации, если введённые данные отсутствуют
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db, id]() { db.showStudentById(id); })) break;
 
 			Utils::pauseScreen();
 			Utils::clearScreen();
 			break;
 		}
-		case '3': // Меняем данные студента
+		case '4': // Меняем данные студента
 		{
 			Utils::clearScreen();
 
 			int id;
 
 			// Отображаем всех студентов
-			try { db.showAllStudents(); }
-			catch (const std::out_of_range& e) // Обработка ситуации, когда в списке нет студентов
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db]() { db.showAllStudents(); })) break;
 
 			std::cout << "Введите ID студента, у которого нужно изменить данные: ";
 			std::cin >> id;
 
 			// Редактируем данные студента
-			try { db.editStudentData(db.getStudentById(id)); }
-			catch (const std::invalid_argument& e) // Обработка ввода некорректного ID
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
-			catch (const std::out_of_range& e) // Обработка ситуации, если введённые данные отсутствуют
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db, id]() { db.editStudentData(db.getStudentById(id)); })) break;
 
 			break;
 		}
-		case '4': // Удаляем студента
+		case '5': // Удаляем студента
 		{
 			Utils::clearScreen();
 
 			int id;
 
 			// Отображаем всех студентов
-			try { db.showAllStudents(); }
-			catch (const std::out_of_range& e) // Обработка ситуации, когда в списке нет студентов
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db]() { db.showAllStudents(); })) break;
 
 			std::cout << "Введите ID студента, которого нужно удалить: ";
 			std::cin >> id;
 
 			// Удаляем студента
-			try { db.deleteStudent(id); }
-			catch (const std::invalid_argument& e) // Обработка ввода некорректного ID
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
-			catch (const std::out_of_range& e) // Обработка ситуации, если введённые данные отсутствуют
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db, id]() { db.deleteStudent(id); })) break;
 
 			std::cout << "\nСтудент удалён!\n";
 
@@ -222,13 +183,13 @@ void studentMenu(Database& db)
 			Utils::clearScreen();
 			break;
 		}
-		case '5': // Выход в главное меню
+		case '6': // Выход в главное меню
 			Utils::clearScreen();
 			break;
 		default:
 			Utils::clearScreen();
 		}
-	} while (choice != '5');
+	} while (choice != '6');
 }
 
 /*==================== МЕНЮ УПРАВЛЕНИЯ ПРЕДМЕТАМИ ====================*/
@@ -270,18 +231,10 @@ void subjectMenu(Database& db)
 			Utils::clearScreen();
 
 			// Отображаем все предметы
-			try { db.showAllSubjects(); }
-			catch (const std::out_of_range& e) // Обработка ситуации, когда в списке нет предметов
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db]() { db.showAllSubjects(); })) break;
 
 			Utils::pauseScreen();
 			Utils::clearScreen();
-
 			break;
 		}
 		case '2': // Добавляем новый предмет в список
@@ -298,14 +251,7 @@ void subjectMenu(Database& db)
 			std::cin >> newSubjectName;
 
 			// Добавляем предмет в список
-			try { db.addSubject(newSubjectId, newSubjectName); }
-			catch (const std::invalid_argument& e) // Обработка ввода некорректных данных
-			{
-				std::cerr << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db, newSubjectId, newSubjectName]() { db.addSubject(newSubjectId, newSubjectName); })) break;
 			
 			break;
 		}
@@ -362,14 +308,7 @@ void gradesMenu(Database& db)
 			int studentId, subjectId, grade;
 
 			// Отображаем всех студентов
-			try { db.showAllStudents(); }
-			catch (const std::out_of_range& e) // Обработка ситуации, когда в списке нет студентов
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db]() { db.showAllStudents(); })) break;
 
 			std::cout << "Введите ID студента, которому нужно поставить оценку: ";
 			std::cin >> studentId;
@@ -377,14 +316,7 @@ void gradesMenu(Database& db)
 			std::cout << "\n";
 
 			// Отображаем все предметы
-			try { db.showAllSubjects(); }
-			catch (const std::out_of_range& e) // Обработка ситуации, когда в списке нет предметов
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db]() { db.showAllSubjects(); })) break;
 
 			std::cout << "Введите ID предмета, по которому нужно выставить оценку: ";
 			std::cin >> subjectId;
@@ -396,26 +328,9 @@ void gradesMenu(Database& db)
 			} while (grade < 0 || grade > 5); // Проверка, входит ли введённое значение в необходимый диапазон
 
 			// Ставим оценку
-			try
-			{
-				db.rate(studentId, subjectId, grade);
-				std::cout << "\nОценка поставлена!\n";
-			}
-			catch (const std::invalid_argument& e) // Обработка ввода некорректных данных
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
-			catch (const std::out_of_range& e) // Обработка ситуации, если введённые данные отсутствуют
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db, studentId, subjectId, grade]() { db.rate(studentId, subjectId, grade); })) break;
 
+			std::cout << "\nОценка поставлена!\n"; 
 			Utils::pauseScreen();
 			Utils::clearScreen();
 			break;
@@ -427,14 +342,7 @@ void gradesMenu(Database& db)
 			int id;
 
 			// Отображаем всех студентов
-			try { db.showAllStudents(); }
-			catch (const std::out_of_range& e) // Обработка ситуации, когда в списке нет студентов
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db]() { db.showAllStudents(); })) break;
 
 			std::cout << "Введите ID студента, чтобы посмотреть его оценки: ";
 			std::cin >> id;
@@ -442,40 +350,12 @@ void gradesMenu(Database& db)
 			std::cout << "\n";
 
 			// Отображаем данные студента по ID
-			try { db.showStudentById(id); }
-			catch (const std::invalid_argument& e) // Обработка ввода некорректного ID
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
-			catch (const std::out_of_range& e) // Обработка ситуации, если введённые данные отсутствуют
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db, id]() { db.showStudentById(id); })) break;
 
 			std::cout << "\n";
 
 			// Отображаем данные о предмете и оценке по нему
-			try { db.showAllStudentGrades(id); }
-			catch (const std::invalid_argument& e) // Обработка ввода некорректного ID
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
-			catch (const std::out_of_range& e) // Обработка ситуации, если введённые данные отсутствуют
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db, id]() { db.showAllStudentGrades(id); })) break;
 
 			Utils::pauseScreen();
 			Utils::clearScreen();
@@ -487,15 +367,8 @@ void gradesMenu(Database& db)
 
 			int studentId, gradeId;
 
-			// Отображаем всех студентов для выбора
-			try { db.showAllStudents(); }
-			catch (const std::out_of_range& e) // Обработка ситуации, когда в списке нет студентов
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			// Отображаем всех студентов
+			if (!Utils::handleDatabaseOperation([&db]() { db.showAllStudents(); })) break;
 
 			std::cout << "Введите ID студента, у которого нужно изменить оценку: ";
 			std::cin >> studentId;
@@ -503,41 +376,13 @@ void gradesMenu(Database& db)
 			std::cout << "\n";
 
 			// Отображаем все оценки выбранного студента
-			try { db.showAllStudentGrades(studentId); }
-			catch (const std::invalid_argument& e) // Обработка ввода некорректного ID
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
-			catch (const std::out_of_range &e) // Обработка ситуации, когда у студента нет оценок
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db, studentId]() { db.showAllStudentGrades(studentId); })) break;
 
 			std::cout << "Введите ID оценки, которую нужно изменить: ";
 			std::cin >> gradeId;
 
 			// Получаем оценку по ID и редактируем её
-			try { db.editGradeData(db.getGradeById(gradeId)); }
-			catch (const std::invalid_argument& e) // Обработка ввода некорректного ID
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
-			catch (const std::out_of_range& e) // Обработка ситуации, если введённые данные отсутствуют
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db, gradeId]() { db.editGradeData(db.getGradeById(gradeId)); })) break;
 
 			std::cout << "\nОценка обновлена!\n";
 			Utils::pauseScreen();
@@ -551,54 +396,19 @@ void gradesMenu(Database& db)
 			int studentId, gradeId;
 
 			// Отображаем всех студентов
-			try { db.showAllStudents(); }
-			catch (const std::out_of_range& e) // Обработка ситуации, когда в списке нет студентов
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db]() { db.showAllStudents(); })) break;
 
 			std::cout << "Введите ID студента, у которого нужно удалить оценку: ";
 			std::cin >> studentId;
 
 			// Отображаем все оценки выбранного студента
-			try { db.showAllStudentGrades(studentId); }
-			catch (const std::invalid_argument& e) // Обработка ввода некорректного ID
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
-			catch (const std::out_of_range& e) // Обработка ситуации, когда у студента нет оценок
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db, studentId]() { db.showAllStudentGrades(studentId); })) break;
 
 			std::cout << "Введите ID оценки, которую нужно удалить: ";
 			std::cin >> gradeId;
 
 			// Удаляем оценку
-			try { db.deleteGrade(gradeId); }
-			catch (const std::invalid_argument& e) // Обработка ввода некорректного ID
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
-			catch (const std::out_of_range& e) // Обработка ситуации, когда оценка с таким ID не найдена
-			{
-				std::cerr << "\n" << e.what();
-				Utils::pauseScreen();
-				Utils::clearScreen();
-				break;
-			}
+			if (!Utils::handleDatabaseOperation([&db, gradeId]() { db.deleteGrade(gradeId); })) break;
 
 			std::cout << "\nОценка удалена!\n";
 			Utils::pauseScreen();

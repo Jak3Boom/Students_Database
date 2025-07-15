@@ -1,3 +1,6 @@
+#include <format>
+#include <algorithm>
+
 #include "Database.h"
 #include "Utils.h"
 
@@ -20,7 +23,7 @@ void Database::showAllStudents() const
 		throw std::out_of_range("Список пуст!\n");
 	}
 
-	for (Student student : students)
+	for (const Student& student : students)
 	{
 		std::cout << std::format("ID: {} | Имя: {} | Email: {} | Группа: {}\n",
 			student.getId(),
@@ -69,7 +72,7 @@ void Database::showStudentById(int id)
 }
 
 // Получаем список всех предметов
-void Database::showAllSubjects()
+void Database::showAllSubjects() const
 {
 	std::cout << std::string(80, '=') << "\n";
 	std::cout << std::format("{:^80}\n", "СПИСОК ВСЕХ ПРЕДМЕТОВ");
@@ -203,7 +206,6 @@ void Database::editStudentData(Student& student)
 			std::cout << "\nИмя обновлено!\n";
 
 			Utils::pauseScreen();
-			Utils::clearScreen();
 			break;
 		}
 		case 2: // Обновляем Email студента
@@ -214,7 +216,6 @@ void Database::editStudentData(Student& student)
 			std::cout << "\nEmail обновлён!\n";
 
 			Utils::pauseScreen();
-			Utils::clearScreen();
 			break;
 		}
 		case 3: // Обновляем группу студента
@@ -225,7 +226,6 @@ void Database::editStudentData(Student& student)
 			std::cout << "\nГруппа обновлена!\n";
 
 			Utils::pauseScreen();
-			Utils::clearScreen();
 			break;
 		}
 		case 4: // "Назад"

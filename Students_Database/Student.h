@@ -18,7 +18,7 @@ public:
 	std::string getEmail() const { return email; }
 	std::string getGroup() const { return group; }
 
-	void setName(std::string newName);
-	void setEmail(std::string newEmail);
-	void setGroup(std::string newGroup);
+	void setName(const std::string& newName);
+	void setEmail(const std::string& newEmail);
+	void setGroup(const std::string& newGroup);
 };

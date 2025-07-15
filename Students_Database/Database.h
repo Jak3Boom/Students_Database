@@ -23,7 +23,7 @@ public:
 	void showStudentById(int id);
 
 	// Предметы
-	void showAllSubjects();
+	void showAllSubjects() const;
 	Subject& getSubjectById(int id);
 
 	// Оценки
@@ -32,7 +32,6 @@ public:
 	void showAllStudentGrades(int studentId);
 
 // Обновление данных
-
 	// Студенты
 	void addStudent(const std::string& name, const std::string& email, const std::string& group);
 	void editStudentData(Student& student);
